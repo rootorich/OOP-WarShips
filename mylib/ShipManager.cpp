@@ -7,8 +7,12 @@ ShipManager::ShipManager(std::vector<ShipSize> sizes, std::vector<ShipOrientatio
   }
 }
 
-void ShipManager::AddShip(ShipSize size) {
-  ships_.emplace_back(size);
+void ShipManager::AddShip(ShipSize size, ShipOrientation orientation) {
+  ships_.emplace_back(size, orientation);
+}
+
+void ShipManager::RemoveShip(size_t ship_num) {
+  ships_.erase(ships_.begin() - 1 + ship_num);
 }
 
 /*
@@ -17,4 +21,6 @@ void ShipManager::HitShip(size_t segment_number, size_t damage) {
 }
 */
 
-4 2 3 1 2 1 4 3
+std::vector<Ship>& ShipManager::get_ships_() {
+  return ships_;
+}

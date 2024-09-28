@@ -4,12 +4,6 @@
 #include <vector>
 #include "HealthManager.h"
 
-/*
-struct yacheyka {
-  size_t* ship_num;
-  size_t seg_num;
-};
-*/
 
 enum class ShipOrientation {
   kHorizontal = 0,
@@ -27,6 +21,8 @@ class Ship {
  public:
   Ship(ShipSize size = ShipSize::kTiny, ShipOrientation orientation = ShipOrientation::kHorizontal);
 
+
+
 //  void set_health_(); // ?
 //  void ChangeHealth();
 
@@ -37,11 +33,11 @@ class Ship {
 
  private:
 
-  const ShipSize segments_;
-  const ShipOrientation orientation_;
+  ShipSize segments_;
+  ShipOrientation orientation_;
   std::vector<HealthManager> segments_health_; // = [1, 2, 3, 4]
 
-  const std::array<ShipSize, 4> kSizeOrder = {ShipSize::kTiny, ShipSize::kSmall, ShipSize::kMedium, ShipSize::kHuge};
+  std::array<ShipSize, 4> kSizeOrder = {ShipSize::kTiny, ShipSize::kSmall, ShipSize::kMedium, ShipSize::kHuge};
 
 };
 

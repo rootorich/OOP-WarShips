@@ -11,7 +11,11 @@ class ShipManager {
   ShipManager() = delete;
   ShipManager(std::vector<ShipSize> sizes, std::vector<ShipOrientation> orientations);
 
-  void AddShip(ShipSize size);
+  void AddShip(ShipSize size, ShipOrientation orientation);
+
+  void RemoveShip(size_t ship_num);
+
+  std::vector<Ship>& get_ships_();
 
   // void HitShip(size_t ship_number, size_t segment_number, size_t damage);
 

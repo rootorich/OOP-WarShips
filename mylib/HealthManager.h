@@ -16,6 +16,7 @@ class HealthManager {
  public:
   HealthManager();
 
+
 /*
   void DecreaseHealth();
   void IncreaseHealth();
@@ -28,7 +29,7 @@ class HealthManager {
  private:
   SegmentHealth health_;
 
-  const std::array<SegmentHealth, 3> kHealthOrder = {SegmentHealth::kDestroyed, SegmentHealth::kInjured, SegmentHealth::kUntouched};
+  std::array<SegmentHealth, 3> kHealthOrder = {SegmentHealth::kDestroyed, SegmentHealth::kInjured, SegmentHealth::kUntouched};
 
 
 };
