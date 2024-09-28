@@ -9,15 +9,15 @@
 class ShipManager {
  public:
   ShipManager() = delete;
-  ShipManager(size_t count, std::vector<ShipSize> sizes);
+  ShipManager(std::vector<ShipSize> sizes, std::vector<ShipOrientation> orientations);
 
   void AddShip(ShipSize size);
 
-  void HitShip(size_t segment_number, size_t damage);
+  // void HitShip(size_t ship_number, size_t segment_number, size_t damage);
 
 
  private:
-  size_t count_;
+  //size_t count_;
   std::vector<Ship> ships_;
 
 
