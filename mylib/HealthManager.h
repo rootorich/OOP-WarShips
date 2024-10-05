@@ -17,15 +17,16 @@ class HealthManager {
   HealthManager();
 
 
-/*
-  void DecreaseHealth();
-  void IncreaseHealth();
-*/
-  SegmentHealth get_health_();
 
+  void DecreaseHealth(int value);
+  void IncreaseHealth(int value);
+
+  SegmentHealth get_health_();
+  void set_health_(int value);
+/*
   SegmentHealth operator + (int value);
   SegmentHealth operator - (int value);
-
+*/
  private:
   SegmentHealth health_;
 

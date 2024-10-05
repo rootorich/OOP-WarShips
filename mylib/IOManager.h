@@ -21,6 +21,9 @@ class IOManager {
   Field CreateField();
 
   void PlaceShip(Field& field, ShipManager& ship_manager);
+  void ShowField(Field& field);
+  void HideField(Field& field);
+  void OpenField(Field& field);
 
  private:
   size_t GetShip(ShipManager& ship_manager);

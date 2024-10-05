@@ -7,6 +7,14 @@
 #include "Ship.h"
 #include "HealthManager.h"
 
+enum class CellStatus {
+  kUnknown = 0,
+  kEmpty = 1,
+  kShip = 2,
+  kInjured = 3,
+  kDestroyed = 4,
+};
+
 class Field {
  public:
   Field(size_t width = 8, size_t height = 8);
@@ -14,13 +22,19 @@ class Field {
 
   bool PlaceShipToField(Ship& ship, size_t x, size_t y);
 
+  std::vector<std::vector<CellStatus>> get_cells_();
+
+  void HideCells();
+  void OpenCells();
+
  private:
-  bool CheckCollisionWithBorders(const ShipSize size, const ShipOrientation orientation, const size_t x, const size_t y);
-  bool CheckCollisionWithShips(const ShipSize size, const ShipOrientation orientation, const size_t x, const size_t y);
+  bool HasCollisionWithBorders(ShipSize size, ShipOrientation orientation, size_t x, size_t y) const;
+  bool HasCollisionWithShips(ShipSize size, ShipOrientation orientation, size_t x, size_t y);
 
   struct CellProperties {
     Ship* ship_p;
     size_t segment_num;
+    CellStatus status;
   };
 
 

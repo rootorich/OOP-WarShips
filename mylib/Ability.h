@@ -8,4 +8,4 @@ class Ability {
 };
 
 
-#endif //LAB1_ABILITY_H
+#endif

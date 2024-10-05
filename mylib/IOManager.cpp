@@ -117,7 +117,7 @@ Field IOManager::CreateField() {
   int height;
 
   while (true) {
-    std::cout << "Enter sizes field (not greater than 50): ";
+    std::cout << "Enter width and height sizes field (less than 50x50): ";
     std::cin >> width >> height;
 
     if (width < 0 || height < 0) {
@@ -125,7 +125,7 @@ Field IOManager::CreateField() {
     } else if (width > 50 || height > 50) {
       std::cout << "width and height should be not greater than 50\n";
     } else {
-      std::cout << "Set width = " << width << " and height = " << height << "\n";
+      std::cout << "Set width = " << width << " and height = " << height << "\n\n";
       break;
     }
   }
@@ -144,11 +144,12 @@ void IOManager::PlaceShip(Field& field, ShipManager& ship_manager) {
     std::cout << "Enter left-top position ship (coord x and y): ";
     std::cin >> x >> y;
     
-    if (x < 0 || y < 0) {
+    if (x < 1 || y < 1) {
       std::cout << "uncorrected position\n";
+      std::cout << "inputs less 1\n";
     } else {
-      if (field.PlaceShipToField(ship, x, y)) {
-        std::cout << "Ship is placed\n";
+      if (field.PlaceShipToField(ship, x - 1, y - 1)) {
+        std::cout << "Ship is placed\n\n";
         break;
       } else {
         std::cout << "uncorrected position\n";
@@ -172,6 +173,59 @@ size_t IOManager::GetShip(ShipManager& ship_manager) {
     }
   }
 
-  return ship_num;
+  return ship_num - 1;
 }
 
+void IOManager::ShowField(Field& field) {
+  std::vector<std::vector<CellStatus>> cells_status = field.get_cells_();
+
+  for (auto rows : cells_status) {
+    std::cout << "    ";
+    for (auto cell : rows) {
+      std::cout << " ";
+
+      switch (cell) {
+        case CellStatus::kUnknown:
+          std::cout << "?";
+          break;
+
+        case CellStatus::kEmpty:
+          std::cout << "0";
+          break;
+
+        case CellStatus::kShip:
+          std::cout << "#";
+          break;
+
+        case CellStatus::kInjured:
+          std::cout << "*";
+          break;
+
+        case CellStatus::kDestroyed:
+          std::cout << "X";
+          break;
+
+        default:
+          std::cout << "W";
+          break;
+
+      }
+    }
+
+    std::cout << "\n";
+  }
+
+  std::cout << "\n";
+}
+
+void IOManager::HideField(Field& field) {
+  field.HideCells();
+
+  std::cout << "Field is closed\n\n";
+}
+
+void IOManager::OpenField(Field& field) {
+  field.OpenCells();
+
+  std::cout << "Field is opened\n\n";
+}
