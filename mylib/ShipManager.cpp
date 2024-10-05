@@ -1,5 +1,6 @@
 #include "ShipManager.h"
 
+ShipManager::ShipManager() {}
 
 ShipManager::ShipManager(std::vector<ShipSize> sizes, std::vector<ShipOrientation> orientations) {
   for(auto size : sizes) {

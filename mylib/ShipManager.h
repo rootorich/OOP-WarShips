@@ -8,7 +8,7 @@
 
 class ShipManager {
  public:
-  ShipManager() = delete;
+  ShipManager();
   ShipManager(std::vector<ShipSize> sizes, std::vector<ShipOrientation> orientations);
 
   void AddShip(ShipSize size, ShipOrientation orientation);

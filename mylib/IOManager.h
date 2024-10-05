@@ -9,19 +9,22 @@ class IOManager {
  public:
   IOManager();
 
+
   static void GetInfoShip(Ship ship);
 
-  void GetInfoShips(ShipManager ship_manager);
+  void GetInfoShips(ShipManager& ship_manager);
 
-  void RemoveShip(ShipManager ship_manager, size_t ship_num);
-  void AddShip(ShipManager ship_manager);
-  void ChangeShip(size_t ship_num);
+  void RemoveShip(ShipManager& ship_manager);
+  void AddShip(ShipManager& ship_manager);
+  void ChangeShip(ShipManager& ship_manager);
 
   Field CreateField();
 
-  void PlaceShip(Field field, ShipManager ship_manager, size_t ship_num);
+  void PlaceShip(Field& field, ShipManager& ship_manager);
 
  private:
+  size_t GetShip(ShipManager& ship_manager);
+
 };
 
 
