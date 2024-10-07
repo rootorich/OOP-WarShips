@@ -4,6 +4,52 @@ Field::Field(size_t width, size_t height) : width_{width}, height_{height} {
   cells_.resize(height, std::vector<CellProperties>(width, CellProperties{nullptr, 0, CellStatus::kUnknown}));
 }
 
+Field::Field(const Field& other)
+        : width_(other.width_), height_(other.height_), cells_(other.cells_) {
+  for (size_t i = 0; i < height_; ++i) {
+    for (size_t j = 0; j < width_; ++j) {
+      if (cells_[i][j].ship_p) {
+        cells_[i][j].ship_p = new Ship(*(other.cells_[i][j].ship_p));
+      }
+    }
+  }
+}
+
+Field::Field(Field&& other) noexcept
+        : width_(other.width_), height_(other.height_), cells_(std::move(other.cells_)) {
+  other.width_ = 0;
+  other.height_ = 0;
+}
+
+Field& Field::operator=(const Field& other) {
+  if (this != &other) {
+    width_ = other.width_;
+    height_ = other.height_;
+    cells_ = other.cells_;
+
+    for (size_t i = 0; i < height_; ++i) {
+      for (size_t j = 0; j < width_; ++j) {
+        if (cells_[i][j].ship_p) {
+          cells_[i][j].ship_p = new Ship(*(other.cells_[i][j].ship_p));
+        }
+      }
+    }
+  }
+  return *this;
+}
+
+Field& Field::operator=(Field&& other) noexcept {
+  if (this != &other) {
+    width_ = other.width_;
+    height_ = other.height_;
+    cells_ = std::move(other.cells_);
+
+    other.width_ = 0;
+    other.height_ = 0;
+  }
+  return *this;
+}
+
 bool Field::HasCollisionWithBorders(const ShipSize size, const ShipOrientation orientation, const size_t x, const size_t y) const {
   if (orientation == ShipOrientation::kHorizontal) {
     if (x + static_cast<int>(size) > width_ || y + 1 > height_) {
@@ -86,32 +132,47 @@ std::vector<std::vector<CellStatus>> Field::get_cells_() {
 }
 
 void Field::HideCells() {
-  for (auto rows : cells_) {
-    for (auto cell : rows) {
+  for (auto& rows : cells_) {
+    for (auto& cell : rows) {
       cell.status = CellStatus::kUnknown;
     }
   }
 }
 
 void Field::OpenCells() {
-  for (auto rows : cells_) {
-    for (auto cell : rows) {
-      if (cell.ship_p) {
-        switch (cell.ship_p->get_segments_health_()[cell.segment_num].get_health_()) {
-          case SegmentHealth::kUntouched:
-            cell.status = CellStatus::kShip;
-            break;
-          case SegmentHealth::kInjured:
-            cell.status = CellStatus::kInjured;
-            break;
-
-          case SegmentHealth::kDestroyed:
-            cell.status = CellStatus::kDestroyed;
-            break;
-        }
+  for (auto& rows : cells_) {
+    for (auto& cell : rows) {
+      if (cell.ship_p != nullptr) {
+        cell.status = ConvertSegmentHealthToCellStatus(
+                cell.ship_p->get_segments_health_()[cell.segment_num].get_health_());
       } else {
         cell.status = CellStatus::kEmpty;
       }
     }
   }
 }
+
+CellStatus Field::ConvertSegmentHealthToCellStatus(SegmentHealth health) {
+  switch (health) {
+    case SegmentHealth::kDestroyed:
+      return CellStatus::kDestroyed;
+    case SegmentHealth::kInjured:
+      return CellStatus::kInjured;
+    case SegmentHealth::kUntouched:
+      return CellStatus::kShip;
+    default:
+      return CellStatus::kUnknown;
+  }
+}
+
+void Field::ChangeHealthCell(size_t x, size_t y, int value) {
+  if (cells_[x][y].ship_p) {
+    cells_[x][y].ship_p->get_segments_health_()[cells_[x][y].segment_num].set_health_(value);
+    cells_[x][y].status = ConvertSegmentHealthToCellStatus(
+            cells_[x][y].ship_p->get_segments_health_()[cells_[x][y].segment_num].get_health_());
+  } else {
+    cells_[x][y].status = CellStatus::kEmpty;
+  }
+}
+
+

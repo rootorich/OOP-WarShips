@@ -25,6 +25,15 @@ class IOManager {
   void HideField(Field& field);
   void OpenField(Field& field);
 
+  void HitCell(Field& field);
+  void HealCell(Field& field);
+  void ChangeHealthCell(Field& field, int value);
+
+  void QuickStartShip(Field& field, ShipManager& ship_manager);
+  void QuickStartField(Field& field, ShipManager& ship_manager);
+  void QuickStartPlace(Field& field, ShipManager& ship_manager);
+  void QuickStart(Field& field, ShipManager& ship_manager);
+
  private:
   size_t GetShip(ShipManager& ship_manager);
 

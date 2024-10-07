@@ -25,6 +25,13 @@ void HealthManager::IncreaseHealth(int value) {
   }
 }
 
+SegmentHealth& HealthManager::get_health_() {
+  return health_;
+}
+
+void HealthManager::set_health_(int value) {
+  (value > 0) ? IncreaseHealth(value) : DecreaseHealth(-value);
+}
 
 
 /*
@@ -53,10 +60,3 @@ SegmentHealth HealthManager::operator - (int value) {
 }
 */
 
-SegmentHealth HealthManager::get_health_() {
-  return health_;
-}
-
-void HealthManager::set_health_(int value) {
-  (value > 0) ? IncreaseHealth(value) : DecreaseHealth(-value);
-}

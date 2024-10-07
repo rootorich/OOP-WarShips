@@ -3,7 +3,6 @@
 
 #include <vector>
 
-
 #include "Ship.h"
 #include "HealthManager.h"
 
@@ -19,6 +18,11 @@ class Field {
  public:
   Field(size_t width = 8, size_t height = 8);
 
+  Field(const Field& other);
+  Field(Field&& other) noexcept;
+
+  Field& operator = (const Field& other);
+  Field& operator = (Field&& other) noexcept;
 
   bool PlaceShipToField(Ship& ship, size_t x, size_t y);
 
@@ -26,6 +30,10 @@ class Field {
 
   void HideCells();
   void OpenCells();
+
+  CellStatus ConvertSegmentHealthToCellStatus(SegmentHealth health);
+  void ChangeHealthCell(size_t x, size_t y, int value);
+
 
  private:
   bool HasCollisionWithBorders(ShipSize size, ShipOrientation orientation, size_t x, size_t y) const;

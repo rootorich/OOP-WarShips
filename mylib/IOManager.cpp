@@ -229,3 +229,95 @@ void IOManager::OpenField(Field& field) {
 
   std::cout << "Field is opened\n\n";
 }
+
+void IOManager::HitCell(Field& field) {
+  int damage_value;
+
+  while (true) {
+    std::cout << "Enter damage value (>= 0): ";
+
+    std::cin >> damage_value;
+
+    if (damage_value >= 0) {
+      break;
+    } else {
+      std::cout << "uncorrected value (less 0)\n";
+    }
+  }
+  std::cout << "damage = " << damage_value << "\n";
+
+  IOManager::ChangeHealthCell(field, -damage_value);
+}
+
+void IOManager::HealCell(Field& field) {
+  int heal_value;
+
+  while (true) {
+    std::cout << "Enter heal value (>= 0): ";
+
+    std::cin >> heal_value;
+
+    if (heal_value >= 0) {
+      break;
+    } else {
+      std::cout << "uncorrected value (less 0)\n";
+    }
+  }
+  std::cout << "heal = " << heal_value << "\n";
+
+  IOManager::ChangeHealthCell(field, heal_value);
+}
+
+void IOManager::ChangeHealthCell(Field& field, int value) {
+  int x, y;
+  size_t height = field.get_cells_().size();
+  size_t width = field.get_cells_()[0].size();
+
+  while (true) {
+    std::cout << "Enter cell's coordinates (coord x and y): ";
+    std::cin >> y >> x;
+
+    if (x < 1 || y < 1 || x > width || y > height) {
+      std::cout << "uncorrected position\n";
+      std::cout << "inputs less 1 or greater " << width << " or " << height << "\n";
+    } else {
+      field.ChangeHealthCell(x - 1, y - 1, value);
+      break;
+    }
+  }
+}
+
+void IOManager::QuickStartShip(Field& field, ShipManager& ship_manager) {
+  ship_manager.AddShip(ShipSize::kHuge, ShipOrientation::kHorizontal);
+  ship_manager.AddShip(ShipSize::kHuge, ShipOrientation::kVertical);
+  ship_manager.AddShip(ShipSize::kMedium, ShipOrientation::kHorizontal);
+  ship_manager.AddShip(ShipSize::kMedium, ShipOrientation::kVertical);
+  ship_manager.AddShip(ShipSize::kSmall, ShipOrientation::kHorizontal);
+  ship_manager.AddShip(ShipSize::kSmall, ShipOrientation::kVertical);
+  ship_manager.AddShip(ShipSize::kTiny, ShipOrientation::kHorizontal);
+  ship_manager.AddShip(ShipSize::kTiny, ShipOrientation::kVertical);
+}
+
+void IOManager::QuickStartField(Field& field, ShipManager& ship_manager) {
+  field = Field(8, 8);
+}
+
+void IOManager::QuickStartPlace(Field& field, ShipManager& ship_manager) {
+  field.PlaceShipToField(ship_manager.get_ships_()[0], 0, 0);
+  field.PlaceShipToField(ship_manager.get_ships_()[1], 0, 2);
+  field.PlaceShipToField(ship_manager.get_ships_()[2], 2, 2);
+  field.PlaceShipToField(ship_manager.get_ships_()[3], 4, 4);
+  field.PlaceShipToField(ship_manager.get_ships_()[6], 6, 6);
+  field.PlaceShipToField(ship_manager.get_ships_()[7], 7, 0);
+}
+
+void IOManager::QuickStart(Field& field, ShipManager& ship_manager) {
+  IOManager::QuickStartShip(field, ship_manager);
+  IOManager::QuickStartField(field, ship_manager);
+  IOManager::QuickStartPlace(field, ship_manager);
+}
+
+
+
+
+
