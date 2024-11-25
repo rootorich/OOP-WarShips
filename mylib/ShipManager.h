@@ -9,13 +9,15 @@
 class ShipManager {
  public:
   ShipManager();
-  ShipManager(std::vector<ShipSize> sizes, std::vector<ShipOrientation> orientations);
+  explicit ShipManager(const std::vector<std::pair<ShipSize, ShipOrientation>>& ships_data);
 
-  void AddShip(ShipSize size, ShipOrientation orientation);
+  void AddShip(std::pair<ShipSize, ShipOrientation> ship_data);
 
   void RemoveShip(size_t ship_num);
 
-  std::vector<Ship>& get_ships_();
+  //std::vector<Ship>& get_ships_();
+  Ship& GetShip(size_t ship_num);
+  size_t GerCountShips();
 
 
  private:

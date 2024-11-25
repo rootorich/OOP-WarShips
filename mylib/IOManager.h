@@ -9,9 +9,6 @@ class IOManager {
  public:
   IOManager();
 
-
-  static void GetInfoShip(Ship ship);
-
   void GetInfoShips(ShipManager& ship_manager);
 
   void RemoveShip(ShipManager& ship_manager);

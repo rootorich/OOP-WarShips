@@ -5,6 +5,7 @@
 
 #include "Ship.h"
 #include "HealthManager.h"
+#include "ShipManager.h"
 
 enum class CellStatus {
   kUnknown = 0,
@@ -16,7 +17,8 @@ enum class CellStatus {
 
 class Field {
  public:
-  Field(size_t width = 8, size_t height = 8);
+  Field(size_t width = 8, size_t height = 8, ShipManager& ship_manager);
+  // ссылки использовать нельзя, из-за запрета копирования. Указатели возможно решат проблему
 
   Field(const Field& other);
   Field(Field&& other) noexcept;
@@ -45,13 +47,12 @@ class Field {
     CellStatus status;
   };
 
-
   std::vector<std::vector<CellProperties>> cells_;
-
 
   size_t width_;
   size_t height_;
 
+  ShipManager& ship_manager_;
 };
 
 #endif

@@ -9,7 +9,9 @@ Ship::Ship(ShipSize size, ShipOrientation orientation) : segments_{size}, orient
   }
 }
 
-ShipSize Ship::get_segments_() {
+std::array<ShipSize, 4> Ship::kSizeOrder = {ShipSize::kTiny, ShipSize::kSmall, ShipSize::kMedium, ShipSize::kHuge};
+
+ShipSize Ship::get_size_() {
   return segments_;
 }
 

@@ -1,6 +1,6 @@
 #include "Field.h"
 
-Field::Field(size_t width, size_t height) : width_{width}, height_{height} {
+Field::Field(size_t width, size_t height, ShipManager& ship_manager) : width_{width}, height_{height}, ship_manager_{ship_manager} {
   cells_.resize(height, std::vector<CellProperties>(width, CellProperties{nullptr, 0, CellStatus::kUnknown}));
 }
 
@@ -92,7 +92,7 @@ bool Field::HasCollisionWithShips(const ShipSize size, const ShipOrientation ori
 
 bool Field::PlaceShipToField(Ship& ship, size_t x, size_t y) {
   const ShipOrientation orientation = ship.get_orientation_();
-  const ShipSize size = ship.get_segments_();
+  const ShipSize size = ship.get_size_();
 
   if (HasCollisionWithBorders(size, orientation, x, y)) {
     return false;

@@ -5,22 +5,17 @@
 
 IOManager::IOManager() {}
 
-void IOManager::GetInfoShip(Ship shiper) {
-  std::cout << "count segments = " << static_cast<int>(shiper.get_segments_())   << "\n";
-}
 
 void IOManager::GetInfoShips(ShipManager& ship_manager) {
-  std::vector<Ship> ships = ship_manager.get_ships_();
-
-  if (ships.empty()) {
+  if (ship_manager.GerCountShips() == 0) {
     std::cout << "I don't have ships\n";
   } else {
-    for (size_t i = 0; i < ships.size(); ++i) {
+    for (size_t i = 0; i < ship_manager.GerCountShips(); ++i) {
       std::cout << i + 1 << ") ";
 
       std::cout << "size = ";
 
-      switch (ships[i].get_segments_()) {
+      switch (ship_manager.GetShip(i).get_size_()) {
         case ShipSize::kTiny:
           std::cout << 1;
           break;
@@ -43,7 +38,7 @@ void IOManager::GetInfoShips(ShipManager& ship_manager) {
 
       std::cout << " orientation = ";
 
-      switch (ships[i].get_orientation_()) {
+      switch (ship_manager.GetShip(i).get_orientation_()) {
         case ShipOrientation::kHorizontal:
           std::cout << "horizontal";
           break;
@@ -64,7 +59,7 @@ void IOManager::GetInfoShips(ShipManager& ship_manager) {
 void IOManager::RemoveShip(ShipManager& ship_manager) {
   size_t ship_num = IOManager::GetShip(ship_manager);
 
-  if (ship_manager.get_ships_().empty()) {
+  if (ship_manager.GerCountShips() == 0) {
     std::cout << "I don't have ships";
   } else {
     ship_manager.RemoveShip(ship_num - 1);
@@ -104,7 +99,7 @@ void IOManager::AddShip(ShipManager& ship_manager) {
 
   std::cout << "\n";
 
-  ship_manager.AddShip(size, orientation);
+  ship_manager.AddShip(std::pair<ShipSize, ShipOrientation> (size, orientation));
 }
 
 void IOManager::ChangeShip(ShipManager& ship_manager) {
@@ -138,7 +133,7 @@ void IOManager::PlaceShip(Field& field, ShipManager& ship_manager) {
 
   int x;
   int y;
-  Ship& ship = ship_manager.get_ships_()[ship_num];
+  Ship& ship = ship_manager.GetShip(ship_num);
 
   while (true) {
     std::cout << "Enter left-top position ship (coord x and y): ";
@@ -149,6 +144,8 @@ void IOManager::PlaceShip(Field& field, ShipManager& ship_manager) {
       std::cout << "inputs less 1\n";
     } else {
       if (field.PlaceShipToField(ship, x - 1, y - 1)) {
+        ship_manager.RemoveShip(ship_num);
+
         std::cout << "Ship is placed\n\n";
         break;
       } else {
@@ -166,7 +163,7 @@ size_t IOManager::GetShip(ShipManager& ship_manager) {
 
     std::cin >> ship_num;
 
-    if (ship_num > 0 && ship_num <= ship_manager.get_ships_().size()) {
+    if (ship_num > 0 && ship_num <= ship_manager.GerCountShips()) {
       break;
     } else {
       std::cout << "uncorrected num of ship\n";
@@ -288,14 +285,14 @@ void IOManager::ChangeHealthCell(Field& field, int value) {
 }
 
 void IOManager::QuickStartShip(Field& field, ShipManager& ship_manager) {
-  ship_manager.AddShip(ShipSize::kHuge, ShipOrientation::kHorizontal);
-  ship_manager.AddShip(ShipSize::kHuge, ShipOrientation::kVertical);
-  ship_manager.AddShip(ShipSize::kMedium, ShipOrientation::kHorizontal);
-  ship_manager.AddShip(ShipSize::kMedium, ShipOrientation::kVertical);
-  ship_manager.AddShip(ShipSize::kSmall, ShipOrientation::kHorizontal);
-  ship_manager.AddShip(ShipSize::kSmall, ShipOrientation::kVertical);
-  ship_manager.AddShip(ShipSize::kTiny, ShipOrientation::kHorizontal);
-  ship_manager.AddShip(ShipSize::kTiny, ShipOrientation::kVertical);
+  ship_manager.AddShip(std::pair<ShipSize, ShipOrientation> (ShipSize::kHuge, ShipOrientation::kHorizontal));
+  ship_manager.AddShip(std::pair<ShipSize, ShipOrientation> (ShipSize::kHuge, ShipOrientation::kVertical));
+  ship_manager.AddShip(std::pair<ShipSize, ShipOrientation> (ShipSize::kMedium, ShipOrientation::kHorizontal));
+  ship_manager.AddShip(std::pair<ShipSize, ShipOrientation> (ShipSize::kMedium, ShipOrientation::kVertical));
+  ship_manager.AddShip(std::pair<ShipSize, ShipOrientation> (ShipSize::kSmall, ShipOrientation::kHorizontal));
+  ship_manager.AddShip(std::pair<ShipSize, ShipOrientation> (ShipSize::kSmall, ShipOrientation::kVertical));
+  ship_manager.AddShip(std::pair<ShipSize, ShipOrientation> (ShipSize::kTiny, ShipOrientation::kHorizontal));
+  ship_manager.AddShip(std::pair<ShipSize, ShipOrientation> (ShipSize::kTiny, ShipOrientation::kVertical));
 }
 
 void IOManager::QuickStartField(Field& field, ShipManager& ship_manager) {
@@ -303,12 +300,12 @@ void IOManager::QuickStartField(Field& field, ShipManager& ship_manager) {
 }
 
 void IOManager::QuickStartPlace(Field& field, ShipManager& ship_manager) {
-  field.PlaceShipToField(ship_manager.get_ships_()[0], 0, 0);
-  field.PlaceShipToField(ship_manager.get_ships_()[1], 0, 2);
-  field.PlaceShipToField(ship_manager.get_ships_()[2], 2, 2);
-  field.PlaceShipToField(ship_manager.get_ships_()[3], 4, 4);
-  field.PlaceShipToField(ship_manager.get_ships_()[6], 6, 6);
-  field.PlaceShipToField(ship_manager.get_ships_()[7], 7, 0);
+  field.PlaceShipToField(ship_manager.GetShip(0), 0, 0);
+  field.PlaceShipToField(ship_manager.GetShip(1), 0, 2);
+  field.PlaceShipToField(ship_manager.GetShip(2), 2, 2);
+  field.PlaceShipToField(ship_manager.GetShip(3), 4, 4);
+  field.PlaceShipToField(ship_manager.GetShip(6), 6, 6);
+  field.PlaceShipToField(ship_manager.GetShip(0), 7, 0);
 }
 
 void IOManager::QuickStart(Field& field, ShipManager& ship_manager) {

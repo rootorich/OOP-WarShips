@@ -2,6 +2,7 @@
 
 HealthManager::HealthManager() : health_{SegmentHealth::kUntouched} {}
 
+std::array<SegmentHealth, 3> HealthManager::kHealthOrder = {SegmentHealth::kDestroyed, SegmentHealth::kInjured, SegmentHealth::kUntouched};
 
 void HealthManager::DecreaseHealth(int value) {
   auto it = std::find(kHealthOrder.begin(), kHealthOrder.end(), health_);

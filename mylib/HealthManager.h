@@ -26,9 +26,12 @@ class HealthManager {
 
   SegmentHealth health_;
 
-  std::array<SegmentHealth, 3> kHealthOrder = {SegmentHealth::kDestroyed, SegmentHealth::kInjured, SegmentHealth::kUntouched};
+  static std::array<SegmentHealth, 3> kHealthOrder;
 
 
 };
+
+// Менеджер должен хранить в себе корабли с разных полей
+// Но не корабли с полей, которые принадлежат разным игрокам.
 
 #endif

@@ -21,10 +21,9 @@ class Ship {
  public:
   Ship(ShipSize size = ShipSize::kTiny, ShipOrientation orientation = ShipOrientation::kHorizontal);
 
-  ShipSize get_segments_();
+  ShipSize get_size_();
   ShipOrientation get_orientation_();
   std::vector<HealthManager>& get_segments_health_();
-
 
  private:
 
@@ -32,7 +31,7 @@ class Ship {
   ShipOrientation orientation_;
   std::vector<HealthManager> segments_health_;
 
-  std::array<ShipSize, 4> kSizeOrder = {ShipSize::kTiny, ShipSize::kSmall, ShipSize::kMedium, ShipSize::kHuge};
+  static std::array<ShipSize, 4> kSizeOrder;
 
 };
 
