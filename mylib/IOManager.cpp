@@ -177,39 +177,40 @@ size_t IOManager::GetShip(ShipManager& ship_manager) {
 }
 
 void IOManager::ShowField(Field& field) {
-  std::vector<std::vector<CellStatus>> cells_status = field.get_cells_();
+  std::vector<std::vector<CellProperties>> cells_status = field.get_cells_();
 
-  for (auto rows : cells_status) {
+  for (const auto& rows : cells_status) {
     std::cout << "    ";
     for (auto cell : rows) {
       std::cout << " ";
 
-      switch (cell) {
-        case CellStatus::kUnknown:
-          std::cout << "?";
-          break;
+      if (!cell.vision) {
+        std::cout << "?";
+      } else {
+        switch (cell.status) {
+          case CellStatus::kEmpty:
+            std::cout << "0";
+            break;
 
-        case CellStatus::kEmpty:
-          std::cout << "0";
-          break;
+          case CellStatus::kShip:
+            std::cout << "#";
+            break;
 
-        case CellStatus::kShip:
-          std::cout << "#";
-          break;
+          case CellStatus::kInjured:
+            std::cout << "*";
+            break;
 
-        case CellStatus::kInjured:
-          std::cout << "*";
-          break;
+          case CellStatus::kDestroyed:
+            std::cout << "X";
+            break;
 
-        case CellStatus::kDestroyed:
-          std::cout << "X";
-          break;
+          default:
+            std::cout << "W";
+            break;
 
-        default:
-          std::cout << "W";
-          break;
-
+        }
       }
+
     }
 
     std::cout << "\n";
@@ -284,6 +285,37 @@ void IOManager::ChangeHealthCell(Field& field, int value) {
       field.ChangeHealthCell(x - 1, y - 1, value);
       break;
     }
+  }
+}
+
+void IOManager::UseAbility(Field& field, AbilityManager& abilityManager) {
+  int x, y;
+  std::unique_ptr<Ability> ability;
+
+  try {
+    ability = abilityManager.GetAbility();
+  }
+  catch (const std::string& error) {
+    std::cout << error << "\n";
+  }
+
+  while (true) {
+    std::cout << "Enter cell's coordinates (coord x and y): ";
+    std::cin >> y >> x;
+
+    try {
+      ability->Apply(field, std::pair<int, int>(x,y));
+    }
+    catch (const std::string& error) {
+      std::cout << error << "\n";
+      continue;
+    }
+
+    if (!field.is_live(x, y)) {
+      abilityManager.SetRandomAbility();
+    }
+
+    break;
   }
 }
 

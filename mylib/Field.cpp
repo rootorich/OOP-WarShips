@@ -1,54 +1,54 @@
 #include "Field.h"
 
 Field::Field(size_t width, size_t height) : width_{width}, height_{height} {
-  cells_.resize(height, std::vector<CellProperties>(width, CellProperties{nullptr, 0, CellStatus::kUnknown}));
+  cells_.resize(height, std::vector<CellProperties>(width, CellProperties{nullptr, 0, CellStatus::kNull, false}));
 }
 
-Field::Field(const Field& other)
-        : width_(other.width_), height_(other.height_), cells_(other.cells_) {
-  for (size_t i = 0; i < height_; ++i) {
-    for (size_t j = 0; j < width_; ++j) {
-      if (cells_[i][j].ship_p) {
-        cells_[i][j].ship_p = new Ship(*(other.cells_[i][j].ship_p));
-      }
-    }
-  }
-}
-
-Field::Field(Field&& other) noexcept
-        : width_(other.width_), height_(other.height_), cells_(std::move(other.cells_)) {
-  other.width_ = 0;
-  other.height_ = 0;
-}
-
-Field& Field::operator=(const Field& other) {
-  if (this != &other) {
-    width_ = other.width_;
-    height_ = other.height_;
-    cells_ = other.cells_;
-
-    for (size_t i = 0; i < height_; ++i) {
-      for (size_t j = 0; j < width_; ++j) {
-        if (cells_[i][j].ship_p) {
-          cells_[i][j].ship_p = new Ship(*(other.cells_[i][j].ship_p));
-        }
-      }
-    }
-  }
-  return *this;
-}
-
-Field& Field::operator=(Field&& other) noexcept {
-  if (this != &other) {
-    width_ = other.width_;
-    height_ = other.height_;
-    cells_ = std::move(other.cells_);
-
-    other.width_ = 0;
-    other.height_ = 0;
-  }
-  return *this;
-}
+//Field::Field(const Field& other)
+//        : width_(other.width_), height_(other.height_), cells_(other.cells_) {
+//  for (size_t i = 0; i < height_; ++i) {
+//    for (size_t j = 0; j < width_; ++j) {
+//      if (cells_[i][j].ship_p) {
+//        cells_[i][j].ship_p = new Ship(*(other.cells_[i][j].ship_p));
+//      }
+//    }
+//  }
+//}
+//
+//Field::Field(Field&& other) noexcept
+//        : width_(other.width_), height_(other.height_), cells_(std::move(other.cells_)) {
+//  other.width_ = 0;
+//  other.height_ = 0;
+//}
+//
+//Field& Field::operator=(const Field& other) {
+//  if (this != &other) {
+//    width_ = other.width_;
+//    height_ = other.height_;
+//    cells_ = other.cells_;
+//
+//    for (size_t i = 0; i < height_; ++i) {
+//      for (size_t j = 0; j < width_; ++j) {
+//        if (cells_[i][j].ship_p) {
+//          cells_[i][j].ship_p = new Ship(*(other.cells_[i][j].ship_p));
+//        }
+//      }
+//    }
+//  }
+//  return *this;
+//}
+//
+//Field& Field::operator=(Field&& other) noexcept {
+//  if (this != &other) {
+//    width_ = other.width_;
+//    height_ = other.height_;
+//    cells_ = std::move(other.cells_);
+//
+//    other.width_ = 0;
+//    other.height_ = 0;
+//  }
+//  return *this;
+//}
 
 bool Field::HasCollisionWithBorders(const ShipSize size, const ShipOrientation orientation, const size_t x, const size_t y) const {
   if (orientation == ShipOrientation::kHorizontal) {
@@ -118,23 +118,27 @@ bool Field::PlaceShipToField(Ship& ship, size_t x, size_t y) {
   return true;
 }
 
-std::vector<std::vector<CellStatus>> Field::get_cells_() {
-  std::vector<std::vector<CellStatus>> cells_status;
+std::vector<std::vector<CellProperties>> Field::get_cells_() {
+//  std::vector<std::vector<CellProperties>> cells_status;
 
-  for (size_t i = 0; i < cells_.size(); ++i) {
-    cells_status.emplace_back();
-    for (size_t j = 0; j < cells_[i].size(); ++j) {
-      cells_status[i].emplace_back(cells_[i][j].status);
-    }
-  }
+//  for (size_t i = 0; i < cells_.size(); ++i) {
+//    cells_status.emplace_back();
+//    for (size_t j = 0; j < cells_[i].size(); ++j) {
+//      cells_status[i].emplace_back(cells_[i][j]);
+//    }
+//  }
 
-  return cells_status;
+  return cells_;
+}
+
+CellProperties Field::get_cell_(size_t x, size_t y) {
+  return cells_[x][y];
 }
 
 void Field::HideCells() {
   for (auto& rows : cells_) {
     for (auto& cell : rows) {
-      cell.status = CellStatus::kUnknown;
+      cell.vision = false;
     }
   }
 }
@@ -161,7 +165,7 @@ CellStatus Field::ConvertSegmentHealthToCellStatus(SegmentHealth health) {
     case SegmentHealth::kUntouched:
       return CellStatus::kShip;
     default:
-      return CellStatus::kUnknown;
+      return CellStatus::kNull;
   }
 }
 
@@ -174,5 +178,17 @@ void Field::ChangeHealthCell(size_t x, size_t y, int value) {
     cells_[x][y].status = CellStatus::kEmpty;
   }
 }
+
+bool Field::is_live(size_t x, size_t y) {
+  for (auto segments : cells_[x][y].ship_p->get_segments_health_()) {
+    if (segments.get_health_() != SegmentHealth::kDestroyed) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+
 
 

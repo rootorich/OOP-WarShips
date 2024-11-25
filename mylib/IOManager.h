@@ -4,6 +4,8 @@
 #include "ShipManager.h"
 #include "Field.h"
 
+#include "AbilityManager.h"
+
 
 class IOManager {
  public:
@@ -28,6 +30,9 @@ class IOManager {
   void HitCell(Field& field);
   void HealCell(Field& field);
   void ChangeHealthCell(Field& field, int value);
+
+  void UseAbility(Field& field, AbilityManager& abilityManager);
+
 
   void QuickStartShip(Field& field, ShipManager& ship_manager);
   void QuickStartField(Field& field, ShipManager& ship_manager);

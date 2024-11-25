@@ -1,7 +1,3 @@
-//
-// Created by Zver on 21.09.2024.
-//
-
 #include "Ability.h"
 
 #ifndef LAB1_SCANNER_H
@@ -9,10 +5,10 @@
 
 
 class Scanner : public Ability {
-  void Apply() override;
+  bool Apply(Field& field, std::pair<size_t, size_t> coor) override;
 
-  void Scan();
+  bool Scan(Field& field, std::pair<size_t, size_t> coor);
 };
 
 
-#endif //LAB1_SCANNER_H
+#endif
