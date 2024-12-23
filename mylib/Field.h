@@ -36,7 +36,7 @@ class Field {
   bool PlaceShipToField(Ship& ship, size_t x, size_t y);
 
   std::vector<std::vector<CellProperties>> get_cells_();
-  CellProperties get_cell_(size_t x, size_t y);
+  CellProperties& get_cell_(size_t x, size_t y);
 
   void HideCells();
   void OpenCells();
@@ -46,6 +46,12 @@ class Field {
 
   bool is_live(size_t x, size_t y);
 
+  void OpenCell(size_t x, size_t y);
+  void ChangeCellStatus(size_t x, size_t y, CellStatus status);
+
+  void SetCell(size_t x, size_t y, CellProperties cellProperties);
+
+  size_t CountHittableCells();
 
  private:
   bool HasCollisionWithBorders(ShipSize size, ShipOrientation orientation, size_t x, size_t y) const;

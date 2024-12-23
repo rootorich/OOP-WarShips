@@ -1,16 +1,17 @@
+#ifndef LAB1_ABILITYMANAGER_H
+#define LAB1_ABILITYMANAGER_H
+
 #include <queue>
 #include <map>
 #include <memory>
-#include <time.h>
-#include <stdlib.h>
-//#include <>
+#include <ctime>
+#include <cstdlib>
+#include <algorithm>
+#include <random>
 
 #include "Scanner.h"
 #include "RandomShooter.h"
 #include "DoubleShooter.h"
-
-#ifndef LAB1_ABILITYMANAGER_H
-#define LAB1_ABILITYMANAGER_H
 
 enum class AbilityNames {
 //  None = 0,
@@ -25,10 +26,13 @@ class AbilityManager {
  public:
   AbilityManager();
 
-
   std::unique_ptr<Ability> GetAbility();
 
+  std::queue<AbilityNames> get_queue_ability();
+
   void SetRandomAbility();
+
+  std::unique_ptr<Ability> GetStandartShot();
 
  private:
   std::queue<AbilityNames> queue_ability;

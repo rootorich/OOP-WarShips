@@ -2,6 +2,7 @@
 
 DoubleShooter::DoubleShooter() {
   damage_ = -2;
+  coor_need_ = true;
 }
 
 bool DoubleShooter::Apply(Field& field, std::pair<size_t, size_t> coor) {
@@ -10,4 +11,7 @@ bool DoubleShooter::Apply(Field& field, std::pair<size_t, size_t> coor) {
 
 bool DoubleShooter::DoubleShot(Field& field, std::pair<size_t, size_t> coor) {
   return Shot(field, coor);
+}
+std::string DoubleShooter::MyName() {
+  return "DoubleShooter";
 }

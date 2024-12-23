@@ -1,4 +1,3 @@
-#include <iostream>
 #include "IOManager.h"
 
 
@@ -11,6 +10,8 @@ void IOManager::GetInfoShip(Ship shiper) {
 
 void IOManager::GetInfoShips(ShipManager& ship_manager) {
   std::vector<Ship> ships = ship_manager.get_ships_();
+  std::vector<bool> is_used = ship_manager.get_is_used_();
+
 
   if (ships.empty()) {
     std::cout << "I don't have ships\n";
@@ -56,19 +57,27 @@ void IOManager::GetInfoShips(ShipManager& ship_manager) {
           std::cout << "unknown error";
       }
 
+      std::cout << "is_used = ";
+      std::cout << ((is_used[i]) ? "yes" : "no");
+
       std::cout << "\n";
     }
   }
   std::cout << "\n";
 }
-void IOManager::RemoveShip(ShipManager& ship_manager) {
+bool IOManager::RemoveShip(ShipManager& ship_manager) {
   size_t ship_num = IOManager::GetShip(ship_manager);
 
   if (ship_manager.get_ships_().empty()) {
-    std::cout << "I don't have ships";
+    std::cout << "I don't have ships\n";
+  } else if (ship_manager.get_is_used_()[ship_num]) {
+    std::cout << "Ship is used\n";
   } else {
-    ship_manager.RemoveShip(ship_num - 1);
+    ship_manager.RemoveShip(ship_num);
+    return true;
   }
+
+  return false;
 }
 
 void IOManager::AddShip(ShipManager& ship_manager) {
@@ -108,8 +117,9 @@ void IOManager::AddShip(ShipManager& ship_manager) {
 }
 
 void IOManager::ChangeShip(ShipManager& ship_manager) {
-  IOManager::RemoveShip(ship_manager);
-  IOManager::AddShip(ship_manager);
+  if (IOManager::RemoveShip(ship_manager)) {
+    IOManager::AddShip(ship_manager);
+  }
 }
 
 Field IOManager::CreateField() {
@@ -136,23 +146,28 @@ Field IOManager::CreateField() {
 void IOManager::PlaceShip(Field& field, ShipManager& ship_manager) {
   size_t ship_num = IOManager::GetShip(ship_manager);
 
-  int x;
-  int y;
-  Ship& ship = ship_manager.get_ships_()[ship_num];
+  if (ship_manager.get_is_used_()[ship_num]) {
+    std::cout << "Ship is used\n";
 
-  while (true) {
-    std::cout << "Enter left-top position ship (coord x and y): ";
-    std::cin >> x >> y;
-    
-    if (x < 1 || y < 1) {
-      std::cout << "uncorrected position\n";
-      std::cout << "inputs less 1\n";
-    } else {
-      if (field.PlaceShipToField(ship, x - 1, y - 1)) {
-        std::cout << "Ship is placed\n\n";
-        break;
-      } else {
+  } else {
+    int x;
+    int y;
+    Ship& ship = ship_manager.get_ships_()[ship_num];
+
+    while (true) {
+      std::cout << "Enter left-top position ship (coord x and y): ";
+      std::cin >> x >> y;
+
+      if (x < 1 || y < 1) {
         std::cout << "uncorrected position\n";
+        std::cout << "inputs less 1\n";
+      } else {
+        if (field.PlaceShipToField(ship, x - 1, y - 1)) {
+          std::cout << "Ship is placed\n\n";
+          break;
+        } else {
+          std::cout << "uncorrected position\n";
+        }
       }
     }
   }
@@ -288,34 +303,153 @@ void IOManager::ChangeHealthCell(Field& field, int value) {
   }
 }
 
+void IOManager::GetAbilityList(AbilityManager& abilityManager) {
+  std::queue<AbilityNames> abilityList;
+  size_t count = 0;
+
+  try {
+    abilityList = abilityManager.get_queue_ability();;
+  }
+  catch (const AbilityQueueIsEmpty& error) {
+    std::cout << error.what() << "\n";
+  }
+
+  std::cout << "Queue Ability\n";
+
+  while (!abilityList.empty()) {
+    AbilityNames abilityName = abilityList.front();
+    abilityList.pop();
+
+    count++;
+
+    std::cout << "#";
+    std::cout << count;
+
+    switch (abilityName) {
+      case AbilityNames::Scanner:
+        std::cout << ": Scanner\n";
+        break;
+
+      case AbilityNames::RandomShooter:
+        std::cout << ": RandomShooter\n";
+        break;
+
+      case AbilityNames::DoubleShooter:
+        std::cout << ": DoubleShooter\n";
+        break;
+
+      default:
+        std::cout << ": Unknowed ability\n";
+    }
+  }
+}
+
 void IOManager::UseAbility(Field& field, AbilityManager& abilityManager) {
   int x, y;
   std::unique_ptr<Ability> ability;
 
+  size_t hittable_cells = field.CountHittableCells();
+
+  bool is_success;
+
   try {
     ability = abilityManager.GetAbility();
   }
-  catch (const std::string& error) {
-    std::cout << error << "\n";
+  catch (const AbilityQueueIsEmpty& error) {
+    std::cout << error.what() << "\n";
+
+    std::cout << "Use Standart Shot";
+
+    ability = abilityManager.GetStandartShot();
+
   }
+  catch (const UnknownAbility& error) {
+    std::cout << error.what() << "\n";
+
+    std::cout << "Use Standart Shot";
+
+    ability = abilityManager.GetStandartShot();
+  }
+
+  while (true) {
+    if (ability->get_coor_need_()) {
+      std::cout << "Enter cell's coordinates (coord x and y): ";
+      std::cin >> y >> x;
+
+      y = y - 1;
+      x = x - 1;
+
+      try {
+        is_success = ability->Apply(field, std::pair<int, int>(x, y));
+      }
+      catch (const ShotOutOfBounds& error) {
+        std::cout << error.what();
+        continue;
+      }
+
+
+      if (ability->MyName() == "Scanner") {
+        if (is_success) {
+          std::cout << "Has ";
+        } else {
+          std:: cout << "Hasn't ";
+        }
+        std::cout << "Ship here\n";
+      } else if (ability->MyName() == "DoubleShooter") {
+        if (is_success) {
+          std::cout << "Hit";
+          field.OpenCell(x, y);
+        } else {
+          std::cout << "Miss";
+        }
+        std::cout << "\n";
+      }
+    }
+
+    break;
+  }
+
+  if (hittable_cells < field.CountHittableCells()) {
+    abilityManager.SetRandomAbility();
+  }
+}
+
+void IOManager::ShotAbility(Field& field, AbilityManager& abilityManager) {
+  std::unique_ptr<Ability> ability = abilityManager.GetStandartShot();
+
+  int x, y;
+  bool is_success;
+
+  size_t hittable_cells = field.CountHittableCells();
 
   while (true) {
     std::cout << "Enter cell's coordinates (coord x and y): ";
     std::cin >> y >> x;
 
+    x--;
+    y--;
+
+
     try {
-      ability->Apply(field, std::pair<int, int>(x,y));
+      is_success = ability->Apply(field, std::pair<int, int>(x,y));
     }
-    catch (const std::string& error) {
-      std::cout << error << "\n";
+    catch (const ShotOutOfBounds& error) {
+      std::cout << error.what();
       continue;
     }
 
-    if (!field.is_live(x, y)) {
-      abilityManager.SetRandomAbility();
+    if (is_success) {
+      std::cout << "Hit";
+    } else {
+      std::cout << "Miss";
     }
+    field.OpenCell(x, y);
 
     break;
+  }
+
+  if (hittable_cells < field.CountHittableCells()) {
+    abilityManager.SetRandomAbility();
   }
 }
 
@@ -347,6 +481,27 @@ void IOManager::QuickStart(Field& field, ShipManager& ship_manager) {
   IOManager::QuickStartShip(field, ship_manager);
   IOManager::QuickStartField(field, ship_manager);
   IOManager::QuickStartPlace(field, ship_manager);
+}
+bool IOManager::QueryPlayerInfo() {
+  int choose;
+
+  while(true) {
+
+    std::cout << "Who is player?\n";
+    std::cout << "1. Human\n";
+    std::cout << "2. Bot\n";
+
+    std::cin >> choose;
+
+    if (choose == 1 || choose == 2) {
+      break;
+    } else {
+      std::cout << "Incorrect input\n\n";
+    }
+  }
+
+  choose--;
+  return choose;
 }
 
 

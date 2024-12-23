@@ -6,6 +6,8 @@
 
 #include "AbilityManager.h"
 
+#include <iostream>
+
 
 class IOManager {
  public:
@@ -16,7 +18,7 @@ class IOManager {
 
   void GetInfoShips(ShipManager& ship_manager);
 
-  void RemoveShip(ShipManager& ship_manager);
+  bool RemoveShip(ShipManager& ship_manager);
   void AddShip(ShipManager& ship_manager);
   void ChangeShip(ShipManager& ship_manager);
 
@@ -31,13 +33,17 @@ class IOManager {
   void HealCell(Field& field);
   void ChangeHealthCell(Field& field, int value);
 
+  void GetAbilityList(AbilityManager& abilityManager);
   void UseAbility(Field& field, AbilityManager& abilityManager);
+  void ShotAbility(Field& field, AbilityManager& ability_manager);
 
 
   void QuickStartShip(Field& field, ShipManager& ship_manager);
   void QuickStartField(Field& field, ShipManager& ship_manager);
   void QuickStartPlace(Field& field, ShipManager& ship_manager);
   void QuickStart(Field& field, ShipManager& ship_manager);
+
+  bool QueryPlayerInfo();
 
  private:
   size_t GetShip(ShipManager& ship_manager);

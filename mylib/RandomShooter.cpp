@@ -1,7 +1,9 @@
 #include "RandomShooter.h"
 
 
-RandomShooter::RandomShooter() {}
+RandomShooter::RandomShooter() {
+  coor_need_ = false;
+}
 
 bool RandomShooter::Apply(Field& field, std::pair<size_t, size_t> coor) {
   return RandomShot(field);
@@ -14,15 +16,7 @@ bool RandomShooter::RandomShot(Field& field) {
 
   auto cells = field.get_cells_();
 
-  for (auto row : cells) {
-    for (auto cell : row) {
-      if (cell.status == CellStatus::kShip ||
-          cell.status == CellStatus::kInjured) {
-
-        ++hitable_cells;
-      }
-    }
-  }
+  hitable_cells = field.CountHittableCells();
 
   size_t num_of_skip = std::rand() % (hitable_cells + 1);
 
@@ -32,9 +26,9 @@ bool RandomShooter::RandomShot(Field& field) {
           cells[i][j].status == CellStatus::kInjured) {
 
         if (num_of_skip == 0) {
-          coor.first = i;
-          coor.second = j;
-          Shot(field, coor);
+          coor = {i, j};
+
+          return Shot(field, coor);
         } else {
           --num_of_skip;
         }
@@ -43,4 +37,7 @@ bool RandomShooter::RandomShot(Field& field) {
   }
 
   return false;
+}
+std::string RandomShooter::MyName() {
+  return "RandomShooter";
 }

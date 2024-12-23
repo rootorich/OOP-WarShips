@@ -13,10 +13,13 @@ int main() {
   ShipManager ship_manager = ShipManager();
   Field field;
   IOManager io_manager = IOManager();
+  AbilityManager ability_manager = AbilityManager();
+
+
 
 
   while (true) {
-    std::cout << "Available options:\n";
+    std::cout << "\nAvailable options:\n";
     std::cout << "1) Create Ship\n";
     std::cout << "2) Remove Ship\n";
     std::cout << "3) Change Ship\n";
@@ -36,6 +39,9 @@ int main() {
     std::cout << "22) Quick Start (Field)\n";
     std::cout << "23) Quick Start (Place Ships)\n";
     std::cout << "24) Quick Start (All)\n";
+
+    std::cout << "30) Ability List\n";
+    std::cout << "31) Use Ability\n";
 
     std::cout << "0) Exit\n";
 
@@ -128,6 +134,17 @@ int main() {
         has_field = true;
         break;
 
+      case 30:
+        io_manager.GetAbilityList(ability_manager);
+        break;
+
+      case 31:
+        io_manager.UseAbility(field, ability_manager);
+        break;
+
+      case 32:
+        io_manager.ShotAbility(field, ability_manager);
+        break;
 
       case 0:
         std::cout << "End program\n";

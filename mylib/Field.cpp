@@ -1,8 +1,9 @@
 #include "Field.h"
 
 Field::Field(size_t width, size_t height) : width_{width}, height_{height} {
-  cells_.resize(height, std::vector<CellProperties>(width, CellProperties{nullptr, 0, CellStatus::kNull, false}));
+  cells_.resize(height, std::vector<CellProperties>(width, CellProperties{nullptr, 0, CellStatus::kEmpty, false}));
 }
+
 
 //Field::Field(const Field& other)
 //        : width_(other.width_), height_(other.height_), cells_(other.cells_) {
@@ -131,7 +132,7 @@ std::vector<std::vector<CellProperties>> Field::get_cells_() {
   return cells_;
 }
 
-CellProperties Field::get_cell_(size_t x, size_t y) {
+CellProperties& Field::get_cell_(size_t x, size_t y) {
   return cells_[x][y];
 }
 
@@ -152,6 +153,7 @@ void Field::OpenCells() {
       } else {
         cell.status = CellStatus::kEmpty;
       }
+      cell.vision = true;
     }
   }
 }
@@ -180,13 +182,41 @@ void Field::ChangeHealthCell(size_t x, size_t y, int value) {
 }
 
 bool Field::is_live(size_t x, size_t y) {
-  for (auto segments : cells_[x][y].ship_p->get_segments_health_()) {
-    if (segments.get_health_() != SegmentHealth::kDestroyed) {
-      return true;
+  if (cells_[x][y].status != CellStatus::kEmpty && cells_[x][y].status != CellStatus::kNull) {
+    for (auto segments : cells_[x][y].ship_p->get_segments_health_()) {
+      if (segments.get_health_() != SegmentHealth::kDestroyed) {
+        return true;
+      }
     }
   }
 
+
   return false;
+}
+void Field::OpenCell(size_t x, size_t y) {
+  cells_[x][y].vision = true;
+}
+void Field::ChangeCellStatus(size_t x, size_t y, CellStatus status) {
+  cells_[x][y].status = status;
+}
+size_t Field::CountHittableCells() {
+  size_t hittable_cells = 0;
+
+  for (auto row : cells_) {
+    for (auto cell : row) {
+      if (cell.status == CellStatus::kShip ||
+        cell.status == CellStatus::kInjured) {
+
+        ++hittable_cells;
+      }
+    }
+  };
+
+  return hittable_cells;
+}
+
+void Field::SetCell(size_t x, size_t y, CellProperties cellProperties) {
+    cells_[x][y] = cellProperties;
 }
 
 

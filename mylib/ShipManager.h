@@ -16,10 +16,13 @@ class ShipManager {
   void RemoveShip(size_t ship_num);
 
   std::vector<Ship>& get_ships_();
+  std::vector<bool>& get_is_used_();
 
 
  private:
   std::vector<Ship> ships_;
+
+  std::vector<bool> is_used_;
 
 
 };
