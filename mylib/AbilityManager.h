@@ -25,6 +25,7 @@ enum class AbilityNames {
 class AbilityManager {
  public:
   AbilityManager();
+  explicit AbilityManager(std::queue<AbilityNames>& abilities);
 
   std::unique_ptr<Ability> GetAbility();
 
@@ -33,11 +34,10 @@ class AbilityManager {
   void SetRandomAbility();
 
   std::unique_ptr<Ability> GetStandartShot();
+  std::unique_ptr<Ability> GetRandomShot();
 
  private:
   std::queue<AbilityNames> queue_ability;
-//  std::queue<std::unique_ptr<Ability>> queue_ability;
-
 };
 
 #endif

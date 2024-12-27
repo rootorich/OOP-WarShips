@@ -24,17 +24,23 @@ public:
   void MainMenu();
   void ExitGame();
 
+  bool BotMove();
+
   void Save();
   void Load();
 
   void CreatePlayer();
 
 
-  void CreateShips(ShipManager& ship_manager);
+  void CreateShips(Player& player);
   void CreateBot(Field field, ShipManager ship_manager);
   void NewGame();
 
   void PrepareGame();
+
+
+  void ChangeTurn();
+
 
  private:
   std::vector<Player> players_;
@@ -45,17 +51,27 @@ public:
 
   size_t stage_;
 
-    void SaveField(Saver &saver, Field &field);
+  void SaveField(Saver &saver, Player& player);
 
-    void SaveShip(Saver &saver, Ship ship);
+  void SaveShip(Saver &saver, Ship ship);
+  void SaveShips(Saver &saver, Field field, ShipManager ship_manager);
 
-    Ship *LoadShip(Saver &saver);
+  Ship* LoadShip(Saver &saver);
+  Ship* LoadShips(Saver &saver);
 
-    void SaveCellProperties(Saver &saver, SavedCellProperties savedCellProperties);
+  void SaveCellProperties(Saver &saver, SavedCellProperties savedCellProperties);
 
-    Field *LoadField(Saver &saver);
+  void LoadField(Saver &saver, Player& player);
 
-    SavedCellProperties LoadCellProperties(Saver &saver);
+  SavedCellProperties LoadCellProperties(Saver &saver);
+
+  void SavePlayer(Saver &saver, Player &player);
+
+  void SavePlayerAbilities(Saver &saver, std::queue<AbilityNames> &abilities);
+
+  Player LoadPlayer(Saver &saver, int stage);
+
+  AbilityManager LoadPlayerAbilities(Saver &saver);
 };
 
 #endif
