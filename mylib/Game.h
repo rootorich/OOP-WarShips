@@ -24,7 +24,7 @@ public:
   void MainMenu();
   void ExitGame();
 
-  bool BotMove();
+  void BotMove();
 
   void Save();
   void Load();
@@ -41,6 +41,9 @@ public:
 
   void ChangeTurn();
 
+  void Win();
+  void Lose();
+  bool is_dead(Player& player);
 
  private:
   std::vector<Player> players_;
@@ -67,7 +70,7 @@ public:
 
   void SavePlayer(Saver &saver, Player &player);
 
-  void SavePlayerAbilities(Saver &saver, std::queue<AbilityNames> &abilities);
+  void SavePlayerAbilities(Saver &saver, std::queue<AbilityNames> abilities);
 
   Player LoadPlayer(Saver &saver, int stage);
 
